@@ -1,0 +1,168 @@
+<tool id="dep_preprocessing" name="dep_preprocessing" version="0.0.1" profile="22.01" >
+    <description>DEP_preprocessing tool</description>
+    <requirements>
+    <requirement type="package" version=" ">r-dplyr</requirement>
+<requirement type="package" version=" ">r-readr</requirement>
+<requirement type="package" version=" ">r-tibble</requirement>
+<requirement type="package" version=" ">bioconductor-dep</requirement>
+<requirement type="package" version=" ">r-ggplot2</requirement>
+<requirement type="package" version=" ">r-gridextra</requirement>
+    </requirements>
+    <stdio>
+        <exit_code range="1:" />
+    </stdio>
+    <version_command>DEP_preprocessing.r --version</version_command>
+    <command><![CDATA[ 
+        Rscript '$__tool_directory__/DEP_preprocessing.r'
+    			--data-unique '${data_unique}'
+
+			--experimental-design '${experimental_design}'
+
+			
+#if $str( $lfq_prefix ):
+    --lfq-prefix '${lfq_prefix}'
+#end if
+
+			
+#if $str( $plot_width ):
+    --plot-width '${plot_width}'
+#end if
+
+			
+#if $str( $plot_height ):
+    --plot-height '${plot_height}'
+#end if
+
+			
+#if $str( $plot_dpi ):
+    --plot-dpi '${plot_dpi}'
+#end if
+
+			
+#if $str( $filter_threshold ):
+    --filter-threshold '${filter_threshold}'
+#end if
+
+			
+#if $str( $normalization_method ):
+    --normalization-method '${normalization_method}'
+#end if
+
+			
+#if $str( $imputation_method ):
+    --imputation-method '${imputation_method}'
+#end if
+
+--output-rds "$output_rds"
+					--output-csv "$output_csv"
+					--combine_pdf "$combine_pdf"
+
+    ]]></command>
+    <inputs>
+       <param name="data_unique" type="data" format="csv" label="Input data with LFQ values" optional="False" argument="--data-unique" help="Path to data unique CSV file"/>
+
+<param name="experimental_design" type="data" format="csv" label="Experiment Design" optional="False" argument="--experimental-design" help="Path to experimental design CSV file"/>
+
+<param name="lfq_prefix" type="text" label="Lfq Prefix" value="LFQ." optional="True" argument="--lfq-prefix" help="Prefix for LFQ columns (default: LFQ.)"/>
+
+<param name="plot_width" type="float" label="Plot Width" value="6" optional="True" argument="--plot-width" help="Width of output plots in inches (default: 6)"/>
+
+<param name="plot_height" type="float" label="Plot Height" value="5" optional="True" argument="--plot-height" help="Height of output plots in inches (default: 5)"/>
+
+<param name="plot_dpi" type="integer" label="Plot Dpi" value="300" optional="True" argument="--plot-dpi" help="DPI for output plots (default: 300)"/>
+
+<param name="filter_threshold" type="float" label="Filter Threshold" value="0" optional="True" argument="--filter-threshold" help="Missingness threshold for filtering (default: 0)"/>
+
+<param name="normalization_method" type="select" label="Normalization Method" optional="True" argument="--normalization-method" help="Normalization method: vsn, quantiles, or none (default: vsn)">
+  
+            
+  <option value="vsn" selected="true">vsn</option>
+  
+            
+  <option value="quantiles">quantiles</option>
+  
+            
+  <option value="none">none</option>
+  
+        
+</param>
+
+<param name="imputation_method" type="select" label="Imputation Method" optional="True" argument="--imputation-method" help="Imputation method (default: MinProb)">
+  
+            
+  <option value="MinProb" selected="true">MinProb</option>
+  
+            
+  <option value="man">man</option>
+  
+            
+  <option value="MinDet">MinDet</option>
+  
+            
+  <option value="knn">knn</option>
+  
+            
+  <option value="QRILC">QRILC</option>
+  
+            
+  <option value="MLE">MLE</option>
+  
+            
+  <option value="bpca">bpca</option>
+  
+        
+</param>
+
+    </inputs>
+    <outputs>
+        <data name="output_rds" format="rds" label=" Results" />
+
+<data name="output_csv" format="csv" label="Result CSV" />
+
+<data name="combine_pdf" format="pdf" label="Analysis Plots" />
+
+    </outputs>
+    <help><![CDATA[
+::
+
+  usage: r2g2-script [-h] --data-unique DATA_UNIQUE --experimental-design EXPERIMENTAL_DESIGN [--lfq-prefix LFQ_PREFIX]
+                     [--plot-width PLOT_WIDTH] [--plot-height PLOT_HEIGHT] [--plot-dpi PLOT_DPI]
+                     [--filter-threshold FILTER_THRESHOLD] [--normalization-method {vsn,quantiles,none}]
+                     [--imputation-method {MinProb,man,MinDet,knn,QRILC,MLE,bpca}] [--output-rds OUTPUT_RDS]
+                     [--output-csv OUTPUT_CSV] [--combine-pdf COMBINE_PDF]
+  
+  test
+  
+  options:
+    -h, --help            show this help message and exit
+    --data-unique DATA_UNIQUE
+                          Path to data unique CSV file
+    --experimental-design EXPERIMENTAL_DESIGN
+                          Path to experimental design CSV file
+    --lfq-prefix LFQ_PREFIX
+                          Prefix for LFQ columns (default: LFQ.)
+    --plot-width PLOT_WIDTH
+                          Width of output plots in inches (default: 6)
+    --plot-height PLOT_HEIGHT
+                          Height of output plots in inches (default: 5)
+    --plot-dpi PLOT_DPI   DPI for output plots (default: 300)
+    --filter-threshold FILTER_THRESHOLD
+                          Missingness threshold for filtering (default: 0)
+    --normalization-method {vsn,quantiles,none}
+                          Normalization method: vsn, quantiles, or none (default: vsn)
+    --imputation-method {MinProb,man,MinDet,knn,QRILC,MLE,bpca}
+                          Imputation method (default: MinProb)
+    --output-rds OUTPUT_RDS
+                          Filename for the imputed data R object (default: data_imp.rds)
+    --output-csv OUTPUT_CSV
+                          Filename for the imputed data CSV (default: data_imp.csv)
+    --combine-pdf COMBINE_PDF
+                          Filename for the combined PDF of plots (default: combined_plots.pdf)
+  
+
+
+    ]]></help>
+    <citations>
+        <citation type="doi"></citation>
+    </citations>
+</tool>

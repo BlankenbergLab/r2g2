@@ -1,2 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
 build/
-r2g2.egg-info/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# R
+.RData
+.Rhistory
+
+# Mac
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+
+# Project specific
+out_1/
+test_1/

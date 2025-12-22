@@ -1,10 +1,8 @@
 #!/usr/bin/env Rscript
 
-# Load libraries
+# Load libraries After generating the wrapper please add clusterProfiler, org.Hs.eg.db and enrichplot packages in import
 suppressPackageStartupMessages({
   library(argparse)
-  library(clusterProfiler)
-  library(org.Hs.eg.db)
   library(ggplot2)
   library(enrichplot)
 })
@@ -15,7 +13,6 @@ parser <- ArgumentParser(description='GO Biological Process Enrichment Analysis'
 parser$add_argument('-i', '--input', required=TRUE, help='Input gene list (one gene ID per line)')
 parser$add_argument('-o', '--output_table', required=TRUE, help='Output CSV file for enrichment results')
 parser$add_argument('-p', '--output_plot', required=TRUE, help='Output image file for dotplot')
-parser$add_argument('-f', '--output_format', choices=c("pdf", "png", "svg"), default="png", help='Output image format (pdf, png, svg)')
 parser$add_argument('-q', '--pvalue_cutoff', type='double', default=0.05, help='Adjusted p-value cutoff (default 0.05)')
 parser$add_argument('-n', '--top_n', type='integer', default=20, help='Number of top terms to plot (default 20)')
 parser$add_argument('-t', '--height', type='integer', default=1000, help='Plot height (default 1000)')
@@ -43,13 +40,8 @@ ego <- enrichGO(gene          = gene_list,
 write.csv(as.data.frame(ego), file=args$output_table, row.names=FALSE)
 
 # Open graphics device based on format
-if (args$output_format == "pdf") {
-  pdf(args$output_plot, width=args$width , height=args$height)
-} else if (args$output_format == "png") {
-  png(args$output_plot, width=args$width , height=args$height , res=150)
-} else if (args$output_format == "svg") {
-  svg(args$output_plot, width=args$width , height=args$height )
-}
+
+png(args$output_plot, width=args$width , height=args$height , res=150)
 
 # Plot or message if no enrichment found
 if (nrow(as.data.frame(ego)) > 0) {

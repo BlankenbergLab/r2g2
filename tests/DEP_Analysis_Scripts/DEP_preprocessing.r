@@ -4,7 +4,7 @@ library(readr)
 library(tibble)
 library(DEP)
 library(ggplot2)
-library(gridExtra)
+
 # Create argument parser
 parser <- ArgumentParser(description = 'Preprocessing and quality control for proteomics data')
 
@@ -40,16 +40,15 @@ parser$add_argument('--imputation-method', dest='imp_method', default='MinProb',
                     choices=c('MinProb', 'man', 'MinDet', 'knn', 'QRILC', 'MLE', 'bpca'),
                     help='Imputation method (default: MinProb)')
 
-# Combined PDF output argument
-parser$add_argument('--combined-pdf', dest='combined_pdf', default='report.pdf',
-                    help='Generate a combined PDF with all plots (default: FALSE)')
 
 # Output filenames for imputed data
 parser$add_argument('--output-rds', dest='output_rds', default='data_imp.rds',
                     help='Filename for the imputed data R object (default: data_imp.rds)')
-
 parser$add_argument('--output-csv', dest='output_csv', default='data_imp.csv',
                     help='Filename for the imputed data CSV (default: data_imp.csv)')
+
+parser$add_argument('--combine-pdf', dest='combine_pdf', default='combined_plots.pdf',
+                    help='Filename for the combined PDF of plots (default: combined_plots.pdf)')
 
 # Parse arguments
 args <- parser$parse_args()
@@ -65,6 +64,7 @@ LFQ_columns <- grep(args$lfq_prefix, colnames(data_unique))
 data_se <- make_se(data_unique, LFQ_columns, experimental_design)
 LFQ_columns <- grep(args$lfq_prefix, colnames(data_unique)) 
 data_se_parsed <- make_se_parse(data_unique, LFQ_columns)
+
 
 
 # Frequency plot
@@ -94,11 +94,11 @@ if (args$norm_method == 'vsn') {
 
 # Visualize normalization by boxplots for all samples before and after normalization
 norm <-  plot_normalization(data_filt, data_norm)
-ggsave(file.path( "norm_plot.png"), plot = norm, 
+ggsave(file.path("norm_plot.png"), plot = norm, 
        width = args$plot_width, height = args$plot_height, dpi = args$plot_dpi)
 
 pre_imp <- plot_detect(data_filt)
-ggsave(file.path( "pre_imp_plot.png"), plot = pre_imp, 
+ggsave(file.path("pre_imp_plot.png"), plot = pre_imp, 
        width = args$plot_width, height = args$plot_height, dpi = args$plot_dpi)
 
 mis <- plot_missval(data_filt)
@@ -122,24 +122,25 @@ ggsave(file.path( "post_imp_plot.png"), plot = post_imp,
        width = args$plot_width, height = args$plot_height, dpi = args$plot_dpi)
 
 # Generate combined PDF if requested
-
+if (TRUE) {
+  library(gridExtra)
   
-pdf(file.path( args$combined_pdf), 
-width = args$plot_width, height = args$plot_height)
-
-print(f)
-print(ft)
-print(c)
-print(norm)
-print(pre_imp)
-
-# Print the ComplexHeatmap
-ComplexHeatmap::draw(mis)
-
-print(post_imp)
-
-dev.off()
-
-message("Combined PDF saved to: ", file.path( "combined_plots.pdf"))
-
+  pdf(file.path( args$combine_pdf), 
+      width = args$plot_width, height = args$plot_height)
+  
+  print(f)
+  print(ft)
+  print(c)
+  print(norm)
+  print(pre_imp)
+  
+  # Print the ComplexHeatmap
+  ComplexHeatmap::draw(mis)
+  
+  print(post_imp)
+  
+  dev.off()
+  
+  message("Combined PDF saved to: ", file.path( args$combine_pdf))
+}
 

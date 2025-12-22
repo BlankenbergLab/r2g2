@@ -176,7 +176,6 @@ suite:
     It brings together many aspects of today’s cutting-edge genomic, metagenomic, and metatranscriptomic analysis practices to address a wide array of needs.
 """
 
-
 class Parameter( object ):
     _output_startswith = ('output', 'export')
     _default_default = ''

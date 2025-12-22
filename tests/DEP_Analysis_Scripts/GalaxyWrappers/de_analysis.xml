@@ -1,0 +1,118 @@
+<tool id="de_analysis" name="de_analysis" version="0.0.1" profile="22.01" >
+    <description>DE_analysis tool</description>
+    <requirements>
+    <requirement type="package" version=" ">bioconductor-dep</requirement>
+<requirement type="package" version=" ">r-readr</requirement>
+<requirement type="package" version=" ">r-dplyr</requirement>
+<requirement type="package" version=" ">r-ggplot2</requirement>
+    </requirements>
+    <stdio>
+        <exit_code range="1:" />
+    </stdio>
+    <version_command>DE_analysis.r --version</version_command>
+    <command><![CDATA[ 
+        Rscript '$__tool_directory__/DE_analysis.r'
+    			--input '${input}'
+
+			--control '${control}'
+
+			
+#if $str( $alpha ):
+    --alpha '${alpha}'
+#end if
+
+			
+#if $str( $lfc ):
+    --lfc '${lfc}'
+#end if
+
+--output-csv "$output_csv"
+					--output-plot "$output_plot"
+
+
+					$top_subparser.subparser_selector
+
+					#if $top_subparser.subparser_selector == 'pca'
+							--x '$top_subparser.x'
+							--y '$top_subparser.y'
+							--n '$top_subparser.n'
+							--point-size '$top_subparser.point_size'					
+					#end if
+
+					#if $top_subparser.subparser_selector == 'volcano'
+							--contrast '$top_subparser.contrast'
+							--label-size '$top_subparser.label_size'
+							--add-names '$top_subparser.add_names'					
+					#end if
+
+    ]]></command>
+    <inputs>
+       <param name="input" type="data" format="rds" label="My Custom Input Label" optional="False" argument="--input" help="Input RDS file containing imputed data"/>
+
+<param name="control" type="text" label="Control" value="" optional="False" argument="--control" help="Control condition for differential testing"/>
+
+<param name="alpha" type="float" label="Alpha" value="0.05" optional="True" argument="--alpha" help="Significance threshold (alpha) (default: 0.05)"/>
+
+<param name="lfc" type="float" label="Lfc" value="0.585" optional="True" argument="--lfc" help="Log2 fold change threshold (default: log2(1.5) approx 0.585)"/>
+
+<conditional name="top_subparser">
+  <param name="subparser_selector" type="select" label="Select analysis type">
+    <option value="pca">pca</option>
+    <option value="volcano">volcano</option>
+  </param>
+  <when value="pca">
+    <param name="x" type="integer" label="X" value="1" optional="True" argument="--x" help="Principal component for X axis (default: 1)"/>
+    <param name="y" type="integer" label="Y" value="2" optional="True" argument="--y" help="Principal component for Y axis (default: 2)"/>
+    <param name="n" type="integer" label="N" value="500" optional="True" argument="--n" help="Number of top variable proteins to use (default: 500)"/>
+    <param name="point_size" type="float" label="Point Size" value="4" optional="True" argument="--point-size" help="Point size (default: 4)"/>
+  </when>
+  <when value="volcano">
+    <param name="contrast" type="text" label="Contrast" value="" optional="False" argument="--contrast" help="Contrast to plot (e.g. &quot;Ubi1_vs_Ctrl&quot;)"/>
+    <param name="label_size" type="float" label="Label Size" value="2" optional="True" argument="--label-size" help="Label size (default: 2)"/>
+    <param name="add_names" type="boolean" label="Add Names" truevalue="--add-names" falsevalue="" checked="True" optional="True" argument="--add-names" help="Add protein names to plot (default: TRUE)"/>
+  </when>
+</conditional>
+
+    </inputs>
+    <outputs>
+        <data name="output_csv" format="csv" label="Path to input proteomics data file" />
+
+<data name="output_plot" format="png" label="Analysis plot" />
+
+    </outputs>
+    <help><![CDATA[
+::
+
+  usage: r2g2-script [-h] --input INPUT --control CONTROL [--alpha ALPHA] [--lfc LFC] [--output-csv OUTPUT_CSV]
+                     [--output-plot FILENAME] [--x PCA_X] [--y PCA_Y] [--n PCA_N] [--point-size POINT_SIZE] --contrast
+                     CONTRAST [--label-size LABEL_SIZE] [--add-names]
+  
+  test
+  
+  options:
+    -h, --help            show this help message and exit
+    --input INPUT         Input RDS file containing imputed data
+    --control CONTROL     Control condition for differential testing
+    --alpha ALPHA         Significance threshold (alpha) (default: 0.05)
+    --lfc LFC             Log2 fold change threshold (default: log2(1.5) approx 0.585)
+    --output-csv OUTPUT_CSV
+                          Output filename for DE results CSV (default: dep_results.csv)
+    --output-plot FILENAME
+                          Output filename for the generated plot (default: plot.png)
+    --x PCA_X             Principal component for X axis (default: 1)
+    --y PCA_Y             Principal component for Y axis (default: 2)
+    --n PCA_N             Number of top variable proteins to use (default: 500)
+    --point-size POINT_SIZE
+                          Point size (default: 4)
+    --contrast CONTRAST   Contrast to plot (e.g. "Ubi1_vs_Ctrl")
+    --label-size LABEL_SIZE
+                          Label size (default: 2)
+    --add-names           Add protein names to plot (default: TRUE)
+  
+
+
+    ]]></help>
+    <citations>
+        <citation type="doi"></citation>
+    </citations>
+</tool>

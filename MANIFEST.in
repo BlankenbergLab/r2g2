@@ -1,1 +1,4 @@
+include README.md
+include LICENSE
+include requirements.txt
 include r2g2/parsers/FakeArg.r
